@@ -1,0 +1,13 @@
+---
+title: "Workshop 01. Introduction"
+author: "KiraRoberts"
+date: "2026-06-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Variables and Assignment
+#### Workspace: D:/1Techniques/Data_Science/Data_Science.Rproj
