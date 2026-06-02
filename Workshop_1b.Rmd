@@ -1,5 +1,5 @@
 ---
-title: "Workshop 01. Introduction"
+title: "Workshop 01. Foundations of Data Science"
 author: "KiraRoberts"
 date: "2026-06-02"
 output: html_document
@@ -9,5 +9,20 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Variables and Assignment
-#### Workspace: D:/1Techniques/Data_Science/Data_Science.Rproj
+## Introduction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
