@@ -1,0 +1,7 @@
+site_id,transect_no,date,depth_m,hard_coral_pct,macroalgae_pct,bare_substrate_pct
+Nelly_Bay,1,2026-05-10,4.5,45.2,12.1,42.7
+Nelly_Bay,2,2026-05-10,5.1,38.5,15.4,46.1
+Geoffrey_Bay,1,2026-05-11,3.8,52.1,8.3,39.6
+Geoffrey_Bay,2,2026-05-11,4.2,48.9,10.2,40.9
+Florence_Bay,1,2026-05-12,6,61.3,5.1,33.6
+Florence_Bay,2,2026-05-12,5.8,58.7,6.4,34.9

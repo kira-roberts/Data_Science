@@ -1,0 +1,50 @@
+---
+title: "R for Marine Science Workshop 1"
+author: "Your name here"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+ html_document:
+    code_folding: show
+    collapse: no
+    df_print: paged
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 10
+    highlight: textmate
+    theme: spacelab
+    toc: yes
+    toc_float: yes
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+```{r setup, include=FALSE}
+# Set options, housekeeping
+knitr::opts_chunk$set(
+	echo = FALSE,
+	include = TRUE,
+	message = FALSE,
+	warning = FALSE)
+```
+
+## Introduction
+
+
+### Clear out environment
+```{r housekeeping, message=FALSE, warning=FALSE, include=FALSE}
+rm(list=ls())
+```
+
+### Load packages
+```{r packages, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+```
+
+### Source script
+```{r source-script1, message=FALSE, warning=FALSE, include=FALSE}
+source("Workshop1.R")
+```
+
+
+

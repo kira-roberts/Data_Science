@@ -1,4 +1,25 @@
+# Files to ignore
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
+
+# Extensions to ignore - toggle on and off as required
+# *.html
+# *.png
+# *.jpg
+# *.jpeg
+# *.eps
+# *.pdf
+# *.bmp
+# *.svg
+# *.tiff
+*.Rproj
+
+# Folders to ignore
+archive/
+output/
+
+# Keywords to ignore
+*archive

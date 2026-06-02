@@ -1,0 +1,12 @@
+Field team: Smith and Jones
+Location: Hinchinbrook Island Transect Alpha
+Weather: Overcast, light rain, tide incoming
+Equipment: 50m tape, 1x1m quadrats, refractometer
+NOTE: Equipment failure on plot 3 (refractometer dropped), depth recorded as ND and salinity as 9999.
+site_id,plot_no,canopy_height_m,crab_burrows_count,salinity_ppt,notes
+HIN_A,1,4.2,12,35.5,Normal
+HIN_A,2,3.8,.,34.8,Crab count missed
+HIN_A,3,4.5,15,9999,Equipment failure
+HIN_B,1,NA,8,36.1,Canopy too dense to measure
+HIN_B,2,5.1,0,ND,Water depth too high for reading
+HIN_B,3,4.9,blank,35.2,Data sheet smudged
