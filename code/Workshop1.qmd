@@ -45,6 +45,81 @@ library(tidyverse)
 ```{r source-script1, message=FALSE, warning=FALSE, include=FALSE}
 source("Workshop1.R")
 ```
+Visualising Body Size and Shape 
+```{r}
+# Summary 
+penguins %>% 
+  group_by(species, island) %>% 
+  summarise(mean(body_mass_g, na.rm = TRUE))
+
+# Visualization
+penguins %>% 
+  ggplot(aes(x = species, y = body_mass_g)) +
+    geom_boxplot() + 
+  facet_wrap(~ island) + 
+  labs(x = "Species", y = "Body Mass (g)")
+  
+```
+
+Piping Directly to Visualization
+
+```{r allpipe}
+# Pipe directly from aggregation to plotting with error bars
+mass_compare_plot <- penguins %>% 
+  group_by(species, island) %>% 
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = mean_mass - sd_mass, 
+                    ymax = mean_mass + sd_mass), 
+                width = 0.2) +
+  labs(title = "Mean Body Mass by Species and Island",
+       subtitle = "Error bars represent standard deviation",
+       y = "Mean Body Mass (g)",
+       x = "Species") +
+  theme_minimal()
+
+mass_compare_plot
+
+```
+Pause for thought: Think about what this figure is telling you about the biology of these species of penguins on these different islands. What do you think a statistical test would tell you here?
+
+
+## Challange
+```{r}
+SEmass_compare_plot <- penguins %>% 
+  group_by(species, island) %>% 
+  summarise(
+    n = n(),
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    se_mass = (sd(body_mass_g, na.rm = TRUE))/sqrt(n),
+    .groups = "drop"
+  ) %>% 
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3, position = position_dodge()) +
+  geom_errorbar(aes(ymin = mean_mass - se_mass, 
+                    ymax = mean_mass + se_mass),
+                position = position_dodge(), 
+                width = 0.2) +
+  facet_wrap(~ island) +
+  labs(title = "Mean Body Mass by Species and Island",
+       subtitle = "Error bars represent standard error",
+       facet_wrap = "Island",
+       y = "Mean Body Mass (g)",
+       x = "Species") +
+  theme_minimal()
+
+SEmass_compare_plot
+
+```
+
+
+
 
 
 

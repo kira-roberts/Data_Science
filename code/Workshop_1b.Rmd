@@ -1,0 +1,38 @@
+---
+title: "Workshop 01. Foundations of Data Science"
+author: "KiraRoberts"
+date: "2026-06-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+```{r housekeeping}
+# Housekeeping
+## Inventory every active object currently residing in session RAM
+objects()
+## Purge global environment
+rm(list = ls())
+# Confirm that global session memory now completely vacant
+objects()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

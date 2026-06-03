@@ -1,7 +1,7 @@
 ---
 title: "Workshop 02."
 author: "KiraRoberts"
-date: "2026-06-02"
+date: "2026-06-04"
 output: html_document
 ---
 
