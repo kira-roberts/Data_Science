@@ -1,5 +1,5 @@
 ---
-title: "Workshop 02."
+title: "Workshop 02. Advanced Data Wrangling: Extracting Ecological Signals from Noisy Systems"
 author: "KiraRoberts"
 date: "2026-06-04"
 output: html_document
@@ -9,4 +9,104 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
 ## Introduction
+#### Workspace Github Repository: kira-roberts/Data_Science.Rproj
+This document contains the code needed for the second workshop in the MB5370 "Data Science in R” module. 
+
+This section focuses on our ability to extract biological information from inherently noisy systems. We will look at tidying messy data using *tidyverse* to reshape, lengthen and widen data frames. Using *dplyr* we will mutate joins between data sets and tackle mismatches and formatting errors using *stringr* and *lubridate*.
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(palmerpenguins)
+
+#X <- read_csv(X)
+```
+
+## Tidy Data 
+
+
+
+## Pivoting 
+### Pivot Longer
+Using the R4DS example data set "billboard" we are pivoting our data to tidy it. In this example, if we wanted to group our data by year or use it as a factor, most packages cannot do this as the data is in columns, only the variables should be in columns. 
+Using pivot_longer() we can lengthen the date by decreasing the number of columns and increase the number of rows, solving the issue of data values in the variable name. It does this by splitting the data set by column and reformat it as rows. 
+
+```{r}
+billboard %>% 
+  pivot_longer(
+    cols = starts_with("wk"), 
+    names_to = "week", 
+    values_to = "rank"
+  )
+```
+
+As you can see in the above code snippet, there are three key arguments to the pivot_longer() function:
+
+1. cols which specifies the columns you want to pivot (the ones that aren’t variables). Note: you could either use !c(artist, track, date.entered) OR starts_with('wk') because the cols argument uses the same syntax as select().
+
+2. names_to which names the variable stored in the column names. We chose to name that variable week.
+
+3. values_to which names the variable stored in the cell values that we named rank
+
+Note that in the code "week" and "rank" are quoted because they are new variables that we are creating, they don’t exist yet in the data when we run the pivot_longer() call.
+
+
+### Pivot Wider
+
+
+
+
+## Exersises 
+
+```{r}
+# Create a long version of the penguins dataset
+
+penguins_long <- penguins |>
+  pivot_longer(
+    cols = c(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g),
+    names_to = "measurement_type",
+    values_to = "value"
+  )
+# View the result
+head(penguins_long)
+
+```
+```{r}
+penguins_long |>
+  drop_na(value) |>
+  ggplot(aes(x = value, fill = species)) +
+  geom_histogram(bins = 30, alpha = 0.7, colour = "black") +
+  facet_wrap(~ measurement_type, scales = "free_x") +
+  theme_minimal() +
+  labs(
+    title = "Morphometric distributions across penguin species",
+    x = "Measurement value",
+    y = "Frequency"
+  )
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

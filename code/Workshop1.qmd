@@ -45,7 +45,8 @@ library(tidyverse)
 ```{r source-script1, message=FALSE, warning=FALSE, include=FALSE}
 source("Workshop1.R")
 ```
-Visualising Body Size and Shape 
+
+Visualizing Body Size and Shape 
 ```{r}
 # Summary 
 penguins %>% 
@@ -109,7 +110,7 @@ SEmass_compare_plot <- penguins %>%
   facet_wrap(~ island) +
   labs(title = "Mean Body Mass by Species and Island",
        subtitle = "Error bars represent standard error",
-       facet_wrap = "Island",
+       colour = "Island",
        y = "Mean Body Mass (g)",
        x = "Species") +
   theme_minimal()
@@ -118,6 +119,9 @@ SEmass_compare_plot
 
 ```
 
+```{r}
+if (!dir.exists("../outputs/figures")) dir.create("../outputs/figures") # folder for figs
+```
 
 
 
