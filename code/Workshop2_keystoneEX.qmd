@@ -78,25 +78,37 @@ cleancatch_data <- catch_data %>%
          species = str_replace_all(species, pattern = " ", replacement = "_")) %>% 
   rename(common_name = species) %>% #to merge with species dictionary
   mutate(date = ymd(date)) %>% # Standardizing dates
-  rename(timestamp = date) # Rename to merge with sonde data
-  
+  tidyr::complete(site, date, common_name, fill = list(count = 0)) #ensures that if no data was recorded, a 0 is in the place 
+
+
+
+
+
 print(cleancatch_data)
 
 ```
 
 
 ```{r cleansonde}
-# Standardizing site names
+
 sensor_data <- raw_sonde_data %>%  
-  mutate(site = str_to_sentence(site), 
+  mutate(site = str_to_sentence(site), # Standardizing site names
          site = str_trim(site), 
          site = str_replace_all(site, pattern = " ", replacement = "_")) %>% 
-  mutate(timestamp = dmy_hm(timestamp)) %>% 
-  mutate(turbidity = na_if(turbidity, -999))
+  mutate(timestamp = dmy_hm(timestamp)) %>% # Standardizing dates
+  mutate(turbidity = na_if(turbidity, -999)) %>% # Clearing out bad data
+  mutate(salinity = ifelse(salinity < 0, NA, salinity)) 
 
-head(sensor_data)
+daily_sensordata <- sensor_data %>% 
+  group_by(site, date = as_date(timestamp)) %>% 
+  summarise(daymean_temp = mean(temperature, na.rm = TRUE),
+            daymean_salinity = mean(salinity, na.rm = TRUE),
+            daymean_turbidity = mean(turbidity, na.rm = TRUE),
+            .groups = "drop")
 
-# Standardizing dates
+head(daily_sensordata)
+
+
 
 
 
@@ -111,19 +123,61 @@ species_dictionary <- species_dictionary %>%
 print(species_dictionary)
 ```
 ```{r merge}
+# Joining the Fish data
+merge_catchspecies <- cleancatch_data %>% 
+  left_join(species_dictionary, by = join_by(common_name))
+
+print(merge_catchspecies)
 
 
+# Joining environmental data
+merge_metasensor <- daily_sensordata %>% 
+  left_join(clean_metadata, by = join_by(site))
+
+print(merge_metasensor)
 
 
+# Creating one large dataset
+merged_data <- merge_metasensor %>% 
+  left_join(merge_catchspecies, by = join_by(date, site))
+view(merged_data)
 ```
 
 
 2. A statistical summary table displaying the mean and standard deviation of fish counts and salinity for each species per zone.
+```{r summary}
+summary_table <- merged_data %>% 
+  group_by(scientific_name, zone) %>% 
+  summarise(n = n(),
+            mean_count = mean(count, na.rm = TRUE),
+            sd_count = sd(count, na.rm = TRUE),
+            se_count = sd(count, na.rm = TRUE) / sqrt((n)),
+            mean_salinity = mean(daymean_salinity, na.rm = TRUE),
+            sd_salinity = sd(daymean_salinity, na.rm = TRUE),
+            se_salinity = sd(daymean_salinity, na.rm = TRUE)/ sqrt ((n)),
+            .groups = "drop")
+print(summary_table)
+
+```
+
 
 3. A multi-panel plot (faceted by species) showing fish abundance along the salinity gradient, formatted to professional publication standards.
 
+
+```{r}
+summary_table %>% 
+  ggplot() + 
+  geom_ribbon(aes(x = mean_salinity, ymin = mean_count - se_count, ymax = mean_count + se_count),  fill = "lightgrey") +
+  geom_line(aes(x = mean_salinity, y = mean_count)) + 
+  facet_wrap(~scientific_name)  +
+  theme_bw() +
+  labs( title = "Fish Abundance Along the Salinity Gradient",
+        y = "Average Daily Abundance",
+        x = "Average Salinity Gradient")
+```
+
 **Rules of Engagement**
-Because this is an open-ended task, there is no single "correct" way to approach this and structure your code. However, think about all the data-wrangling and visualisation skills you have developed over recent weeks, and adhere to the following professional standards:
+Because this is an open-ended task, there is no single "correct" way to approach this and structure your code. However, think about all the data-wrangling and visualization skills you have developed over recent weeks, and adhere to the following professional standards:
 
 Monitor your AI agents: You are encouraged to use AI to help you write code. However, for every major data wrangling step, make sure you understand what is going on and are not just running AI-written code blindly.
 
