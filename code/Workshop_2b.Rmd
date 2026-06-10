@@ -9,7 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 ## Introduction
 #### Workspace Github Repository: kira-roberts/Data_Science.Rproj
 This document contains the code needed for the second workshop in the MB5370 "Data Science in R” module. 
@@ -23,14 +22,25 @@ library(stringr)
 library(lubridate)
 library(palmerpenguins)
 
-#X <- read_csv(X)
 ```
 
 ## Tidy Data 
+There are many ways you can display your data, but not all formats are able to be used for analysis. This is where tidy data comes into play. 
+```{r}
+table1
+table2
+table3
+```
+Each of these three tables show data in a different format, but only the first is considered tidy data. There are three rules that make a data set tidy, they are: 
+1. Each variable must have its own column.
+2. Each observation must have its own row.
+3. Each value must have its own cell.
 
-
+Fulfilling these rules makes it easier to learn the tools that work with it as you have a consistent data structure. Having your variables in columns allows R to make use of its ability to work with vectors of values, which makes transforming the data much easier. 
 
 ## Pivoting 
+
+
 ### Pivot Longer
 Using the R4DS example data set "billboard" we are pivoting our data to tidy it. In this example, if we wanted to group our data by year or use it as a factor, most packages cannot do this as the data is in columns, only the variables should be in columns. 
 Using pivot_longer() we can lengthen the date by decreasing the number of columns and increase the number of rows, solving the issue of data values in the variable name. It does this by splitting the data set by column and reformat it as rows. 
@@ -54,17 +64,44 @@ As you can see in the above code snippet, there are three key arguments to the p
 
 Note that in the code "week" and "rank" are quoted because they are new variables that we are creating, they don’t exist yet in the data when we run the pivot_longer() call.
 
+In this data set there are several NA's, these were forced to exist because of the structure of the data set not because they were actually unknown. We can as such as pivot_longer to remove them by adding the argument values_drop_na=TRUE
+
+```{r}
+billboard |> 
+  pivot_longer(
+    cols = starts_with("wk"), 
+    names_to = "week", 
+    values_to = "rank",
+    values_drop_na = TRUE)
+```
 
 ### Pivot Wider
 
+While less common, we may need to widen a data set rather than lengthening it. This is essentially the opposite of lengthening it and uses the pivot_wider function 
 
+```{r}
+df <- tribble(
+  ~id, ~measurement, ~value,
+  "A",        "bp1",    100,
+  "B",        "bp1",    140,
+  "B",        "bp2",    115, 
+  "A",        "bp2",    120,
+  "A",        "bp3",    105
+)
+```
+
+```{r}
+df |> 
+  pivot_wider(
+    names_from = measurement,
+    values_from = value
+  )
+```
 
 
 ## Exersises 
-
+In its tidy version, the penguins morphological data is spread over four separated columns. To be able to facet_wrap() them easily, you need to stack them into two columns - one identifying the measurment name, and one holding the actual numerical value. 
 ```{r}
-# Create a long version of the penguins dataset
-
 penguins_long <- penguins |>
   pivot_longer(
     cols = c(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g),
@@ -75,6 +112,9 @@ penguins_long <- penguins |>
 head(penguins_long)
 
 ```
+
+We specified the target columns we wanted to pivot (cols), the name of the new categorical column that will store our old column headers (names_to), and the name of the new numeric column that will house the data (values_to).
+
 ```{r}
 penguins_long |>
   drop_na(value) |>
@@ -89,6 +129,136 @@ penguins_long |>
   )
 
 ```
+
+Often in literature summary statistics are presented as a cross-tabulated matrix as it's easier for the reader to understand a wide table rather than a long, repetitive list. 
+
+```{r}
+#first calculate the mean 
+mass_summary <- penguins |>
+  drop_na(body_mass_g) |>
+  group_by(species, island) |>
+  summarise(mean_mass = mean(body_mass_g))
+
+head(mass_summary)
+```
+While this output is technically tidy and computationally useful, it is not ideal for publication. This is where pivor_wider can become useful to pull the island names up into columns, creating a clean matrix. 
+
+```{r}
+mass_matrix <- mass_summary |>
+  pivot_wider(
+    names_from = island,
+    values_from = mean_mass
+  )
+
+head(mass_matrix)
+
+```
+The appearance of NA values where a specific species does not occur on a particular island is an immediate biological insight that was visualized directly from our data wrangling. 
+
+
+## Separating and Uniting Data Tables
+### Separating Columns
+In some cases, as seen by table3, one column (rate) contains two variables (case and population). to address this we can use the separate function that causes one column to split into multiple however you designate it. 
+
+```{r}
+table3
+```
+
+To split the rate column up, separate() will need to take the name of the initial column and the names of the columns we want it split into. By default the function splits the values wherever a non-alphanumeric character is. In this example it will split it via the "/". You can set a specific character using the sep argument of separate(). 
+```{r}
+#default
+table3 %>% 
+  separate(rate, into = c("cases", "population"))
+
+#using the sep argument 
+table3 %>% 
+  separate(rate, into = c("cases", "population"), sep = "/")
+```
+
+Another default of separate() is that both the new columns (cases and population) are defined as <chr> types, however since both those values are actually numbers we can ask separate() to convert them into better types using the convert argument. 
+
+```{r}
+table3 %>% 
+  separate(rate, into = c("cases", "population"), convert = TRUE)
+```
+
+*You can also pass a vector of integers to sep. separate() will interpret the integers as positions to split at. Positive values start at 1 on the far-left of the strings; negative values start at -1 on the far-right of the strings. When using integers to separate strings, the length of sep should be one less than the number of names in into. You can use this arrangement to separate the last two digits of each year. This makes this data less tidy, but is useful in other cases, as you’ll see in a little bit.* 
+
+```{r}
+table3 %>% 
+  separate(year, into = c("century", "year"), sep = 2)
+```
+
+### Uniting Data Tables
+To perform the inverse of separate, we can use unite() to combine multiple columns into a single column. Using table5 we can rejoin the century and year columns. unite() takes a data frame, the name of the new variable and a set of columns to combine using dplyr::select(). 
+```{r}
+table5 %>% 
+  unite(new, century, year, sep = "") #sep is added to make sure the default of "_" isnt used
+```
+
+## Wrangling strings and dates
+When combining data sets from different sources, we will inevitably run into formatting mismatches. While we may know that  "Nelly Bay", "nelly_bay", and " NELLY BAY " are the same location, a computer will not. Similarly, date formats are dependent on the researchers regional settings or instrument (e.g., DD/MM/YYYY vs. YYYY-MM-DD).
+Before merging data sets these strings and date-times must be standardized. There are two specialized packages for this: *stringr* for text and *lubridate* for dates. 
+
+### stringr 
+All functions in the stringr package begin with str_, making them easy to find using RStudio's autocomplete. 
+Below we can see a common scenario where several messy site names need to be cleaned up before conducting a data summary.
+```{r}
+# A remarkably messy data frame of field sites
+messy_sites <- tibble(
+  site_id = c("Nelly Bay", "nelly_bay", "NELLY BAY", "Geoffrey_Bay", "geoffrey bay")
+)
+
+# Using stringr within mutate to standardize the text
+clean_sites <- messy_sites |>
+  mutate(site_clean = str_to_lower(site_id),  # 1. Convert everything to lowercase
+         site_clean = str_replace_all(site_clean, pattern = " "), # 2. Replace any spaces with underscores replacement = "_"
+         site_clean = str_trim(site_clean))  # 3. Trim any leading or trailing whitespace (invisible spaces at the ends)
+ 
+print(clean_sites)
+
+```
+By applying these three simple functions, we have converted five uniquely messy inputs into just two perfectly standardized categories: "nelly_bay" and "geoffrey_bay".
+
+
+### lubridate 
+It is notoriously difficult to manage dates in base R, the lubridate package simplifies this by allowing you to essentially spell out the components (year, month, day, hour, minute, and second). 
+```{r}
+library(lubridate)
+
+# Parsing different date formats
+date_1 <- dmy("25/12/2026")
+date_2 <- ymd("2026-12-25")
+
+# R now recognizes these as identical Date objects
+date_1 == date_2
+
+```
+For exact times, we can append this using _hms (hours, minutes, seconds) to our functions.
+
+```{r}
+# A tibble of raw sensor data with a messy character timestamp
+sensor_data <- tibble(
+  raw_time = c("14-05-2026 08:30:00", "14-05-2026 08:45:00", "14-05-2026 09:00:00"),
+  temperature = c(24.5, 24.6, 24.4)
+)
+
+# Converting character strings to true POSIXct datetime objects
+sensor_clean <- sensor_data |>
+  mutate(
+    true_time = dmy_hms(raw_time)
+  )
+
+print(sensor_clean)
+
+```
+Once a column is a recognised datetime object, ggplot2 will automatically understand how to format the x-axis chronologically, and you can easily extract specific components (e.g., using month(true_time) to get the month integer).
+
+## Joining tables 
+
+
+
+
 
 
 
