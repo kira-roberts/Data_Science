@@ -1,1 +1,1 @@
-## A repo with code and data for Techniques in Marine Science 1 (MB5370) - R for Marine Science
+This repository is for the coding work and other related work from the "R for Marine Science" as part of the MB5370 subject compleated at JCU in 2026
