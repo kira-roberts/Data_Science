@@ -135,8 +135,9 @@ sensor_data <- raw_sonde_data %>%
   mutate(turbidity = na_if(turbidity, -999)) %>% # Clearing out bad data
   mutate(salinity = ifelse(salinity < 0, NA, salinity)) 
 
+head(sensor_data)
 
-
+# The sensor loggers collected data every 15min, realistically we don't need data at this resolution - as such we need to work out an average for each day. 
 daily_sensordata <- sensor_data %>% 
   group_by(site, date = as_date(timestamp)) %>% 
   summarise(daymean_temp = mean(temperature, na.rm = TRUE),
@@ -148,7 +149,7 @@ head(daily_sensordata)
 ```
 
 ## Joining the Clean Datasets
-
+While it is possible to join all the data in one lot of code, stepping through the process allows us to ensure that the datasets are joining how we want them to.  
 ```{r merge}
 # Joining the Fish data
 merge_catchspecies <- cleancatch_data %>% 
@@ -167,6 +168,7 @@ print(merge_metasensor)
 # Creating one large dataset
 merged_data <- merge_metasensor %>% 
   left_join(merge_catchspecies, by = join_by(date, site))
+
 view(merged_data)
 ```
 
@@ -193,7 +195,7 @@ print(summary_table)
 
 3.  A multi-panel plot (faceted by species) showing fish abundance along the salinity gradient, formatted to professional publication standards.
 
-```{r, fig.cap="Fish Abundance Along the Salinity Gradient"}
+```{r, fig.cap="Fish Abundance Along the Salinity Gradient", include=FALSE}
 summary_table %>% 
   ggplot() +
   geom_ribbon(aes(x = mean_salinity, ymin = mean_count - se_count, ymax = mean_count + se_count),  fill = "lightgrey") +
@@ -205,12 +207,11 @@ summary_table %>%
         x = "Salinity Gradient")
 ```
 
-\# because apparently i need to spatially organise the data
-
+spatially organised
 ```{r, fig.cap="Fish abundance of four species along the spatial salinity gradient of an estuary"}
 summary_table %>% 
   ggplot() +
-  geom_point(data = merged_data, aes(x = reorder(zone, daymean_salinity), y = count), position = position_jitter(0.15), alpha= 0.2, inherit.aes = FALSE) + 
+  geom_point(data = merged_data, aes(x = reorder(zone, daymean_salinity), y = count), position = position_jitter(0.15), alpha= 0.1, inherit.aes = FALSE) + 
   geom_errorbar(aes(x = zone, ymin = mean_count - se_count, ymax = mean_count + se_count), width = 0.3) +
   geom_point(aes(x = reorder(zone, mean_salinity), y = mean_count, colour = zone), size = 3) +
   facet_wrap(~scientific_name, scales = "fixed") +
@@ -219,10 +220,4 @@ summary_table %>%
   theme(strip.text = element_text(face = "italic", size = 10, colour = "grey20")) +
   labs(y = "Fish Abundance",
         x = "Spacial Salinity Gradient")
-
-
-#(data = merged_data, aes(x = reorder(zone, daymean_salinity), y = count), inherit.aes = FALSE) + 
-  
-#geom_boxplot(data = merged_data, aes(x = reorder(zone, daymean_salinity), y = count), inherit.aes = FALSE) 
-
 ```
