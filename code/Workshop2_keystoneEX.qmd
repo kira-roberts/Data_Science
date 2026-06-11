@@ -85,8 +85,10 @@ print(clean_metadata)
 ### The Catch Data
 
 ```{r cleancatch}
-# Using glimpse() we can see the inconsistencies in the species and that the 
+# Using glimpse() we can see the inconsistencies in the species names and that the date is recognized as a date-time object. 
 glimpse(catch_data)
+# Because glimpse shows only one variable for site, we can use unique() to shows us all of them - and how they are inconsistent with the metadata 
+unique(catch_data$site)
 
 cleancatch_data <- catch_data %>%  
   mutate(site = str_to_sentence(site), # Standardizing site names
@@ -95,7 +97,7 @@ cleancatch_data <- catch_data %>%
   mutate(species = str_to_sentence(species), # Standardizing species
          species = str_trim(species), 
          species = str_replace_all(species, pattern = " ", replacement = "_")) %>% 
-  rename(common_name = species) %>% #to merge with species dictionary
+  rename(common_name = species) %>% # adjusting column names to merge with species dictionary
   mutate(date = ymd(date)) %>% # Standardizing dates
   tidyr::complete(site, date, common_name, fill = list(count = 0)) #ensures that if no data was recorded, a 0 is in the place where the data should have been recorded
 
@@ -109,7 +111,7 @@ print(cleancatch_data)
 ```{r cleandictionary}
 glimpse(species_dictionary)
 
-# Standardizing species
+# Standardizing species 
 species_dictionary <- species_dictionary %>% 
   mutate(common_name = str_to_sentence(common_name), 
          common_name = str_trim(common_name), 
@@ -121,7 +123,9 @@ print(species_dictionary)
 ### The Environmental Data
 
 ```{r cleansonde}
+# Using glimpse() we can see that the timestamp is listed as a character (<chr>) rather than a datetime object (<dttm>) and unique() shows that while the site data is more consistent than previously it still needs to be standardized
 glimpse(raw_sonde_data)
+unique(raw_sonde_data$site)
 
 sensor_data <- raw_sonde_data %>%  
   mutate(site = str_to_sentence(site), # Standardizing site names
@@ -130,6 +134,8 @@ sensor_data <- raw_sonde_data %>%
   mutate(timestamp = dmy_hm(timestamp)) %>% # Standardizing dates
   mutate(turbidity = na_if(turbidity, -999)) %>% # Clearing out bad data
   mutate(salinity = ifelse(salinity < 0, NA, salinity)) 
+
+
 
 daily_sensordata <- sensor_data %>% 
   group_by(site, date = as_date(timestamp)) %>% 

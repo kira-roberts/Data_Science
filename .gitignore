@@ -11,7 +11,7 @@
 # *.jpg
 # *.jpeg
 # *.eps
-# *.pdf
+ *.pdf
 # *.bmp
 # *.svg
 # *.tiff
@@ -20,6 +20,7 @@
 # Folders to ignore
 archive/
 output/
+
 
 # Keywords to ignore
 *archive

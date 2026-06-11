@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="KiraRoberts">
+<meta name="author" content="Kira Roberts">
 
 <title>Keystone exercise: Estuary Fish Survey - Data Rescue Mission</title>
 <style>
@@ -95,7 +95,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>KiraRoberts </p>
+             <p>Kira Roberts </p>
           </div>
   </div>
     
@@ -108,31 +108,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
-<section id="housekeeping-and-setup" class="level4">
-<h4 class="anchored" data-anchor-id="housekeeping-and-setup">Housekeeping and setup</h4>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This project was inherited from a former PhD student who was studying the relationship between predatory fish assemblages and the water quality gradient along the Ross River (Townsville, QLD).</p>
+<p>Unfortunately for us, their data management was completed manually and the files are a disaster. Our primary task is to clean the data, and produce a master data set, from which we can produce a publication-ready visualization of the estuary’s ecology.</p>
+<section id="housekeeping-and-setup" class="level3">
+<h3 class="anchored" data-anchor-id="housekeeping-and-setup">Housekeeping and setup</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the packages needed </span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clearing the environment</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the packages needed </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
+<section id="the-data" class="level3">
+<h3 class="anchored" data-anchor-id="the-data">The data</h3>
+<p>There were 4 datasets that were given to us. One is an excel file with the data spread over several sheets, with each needing to be loaded in separately.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clearing the environment</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># loading data</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>catch1 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../data/estuary_catch_log.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">1</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>catch2 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../data/estuary_catch_log.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">2</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>catch3 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../data/estuary_catch_log.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">3</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>catch4 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../data/estuary_catch_log.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">4</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>catch_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(catch1, catch2, catch3, catch4)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(catch_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading in the data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>catch1 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../data/estuary_catch_log.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">1</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>catch2 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../data/estuary_catch_log.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">2</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>catch3 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../data/estuary_catch_log.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">3</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>catch4 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../data/estuary_catch_log.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">4</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>catch_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(catch1, catch2, catch3, catch4)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/estuary_metadata.csv"</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>raw_sonde_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/estuary_sonde_data.csv"</span>) </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>species_dictionary <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/species_dictionary.csv"</span>) </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that all files are loaded and what we expect</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(metadata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    site_name    lat    lon       zone
+1  Upper_Ross -19.31 146.74   Upstream
+2    mid_ross -19.28 146.78     Middle
+3  LOWER ROSS -19.26 146.81 Downstream
+4 ross_mouth  -19.25 146.83     Marine</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(catch_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
   site       date                species       count
@@ -144,17 +165,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 5 Lower_ross 2026-05-02 00:00:00 barramundi        1
 6 Lower_ross 2026-05-02 00:00:00 MANGROVE JACK     1</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/estuary_metadata.csv"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(metadata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(species_dictionary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>    site_name    lat    lon       zone
-1  Upper_Ross -19.31 146.74   Upstream
-2    mid_ross -19.28 146.78     Middle
-3  LOWER ROSS -19.26 146.81 Downstream
-4 ross_mouth  -19.25 146.83     Marine</code></pre>
+<pre><code>    common_name           scientific_name
+1    barramundi          Lates calcarifer
+2 mangrove_jack Lutjanus argentimaculatus
+3         bream        Acanthopagrus spp.
+4      flathead        Platycephalus spp.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>raw_sonde_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/estuary_sonde_data.csv"</span>) </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(raw_sonde_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(raw_sonde_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        site        timestamp temperature  salinity turbidity
 1 upper_ross 01/05/2026 00:00    23.71379  4.054812  6.489046
@@ -164,32 +183,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 5 upper_ross 01/05/2026 00:15    26.06955  3.962750 25.184739
 6   mid_ross 01/05/2026 00:15    24.62576 12.053501 34.816596</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>species_dictionary <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/species_dictionary.csv"</span>) </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(species_dictionary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>    common_name           scientific_name
-1    barramundi          Lates calcarifer
-2 mangrove_jack Lutjanus argentimaculatus
-3         bream        Acanthopagrus spp.
-4      flathead        Platycephalus spp.</code></pre>
 </div>
-</div>
-<p>#Keystone exercise: Estuary Fish Survey - Data Rescue Mission <strong>The Premise:</strong> You have inherited a project from a former PhD student who was studying the relationship between water quality and predatory fish assemblages along the Ross River Estuary gradient. Unfortunately, their data management was entirely manual, and the files are a disaster.</p>
-<p>They left you with four separate datasets: 1. estuary_catch_log.xlsx: Handwritten field counts of fish species (using common names), spread across multiple spreadsheet tabs. 2. estuary_metadata.csv: The spatial coordinates and estuary zones for each site. 3. estuary_sonde_data.csv: High-frequency water quality sensor readings. 4. species_dictionary.csv: A taxonomic lookup table linking local common names to their accepted scientific names.</p>
-<p>Your mission is to write a single, reproducible R script (or .qmd) that ingests this mess, cleans it, joins it into a single master dataset, and produces a publication-ready visualisation of the estuary’s ecology.</p>
-<p><strong>Deliverables (to include in ePortfolio report/page)</strong></p>
-<p>At the end of this exercise, your final script/document must successfully output:</p>
-<ol type="1">
-<li>A clean master dataset containing no legacy errors (-999.0), standardised text, a complete zero-catch framework, and scientific names instead of common names.</li>
-</ol>
+</section>
+</section>
+<section id="the-deep-clean" class="level2">
+<h2 class="anchored" data-anchor-id="the-deep-clean">The Deep Clean</h2>
+<p>Looking at the data, we can see several inconsistencies in the naming of variables and organisation of dates/times, looking deeper shows that there is also issues with the data itself where entries are missing or contain legacy errors. These need to be adjusted to ensure the datasets can be joined and accurately displayed.</p>
+<section id="metadata" class="level3">
+<h3 class="anchored" data-anchor-id="metadata">Metadata</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardizing site names</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>clean_metadata <span class="ot">&lt;-</span> metadata <span class="sc">%&gt;%</span> </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site_name =</span> <span class="fu">str_to_sentence</span>(site_name), </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">site_name =</span> <span class="fu">str_trim</span>(site_name), </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">site_name =</span> <span class="fu">str_replace_all</span>(site_name, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site =</span> site_name)  <span class="co"># Rename to merge with catch data</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(clean_metadata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using glimpse() we can see the inconsistencies in site_name</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(metadata) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 4
+Columns: 4
+$ site_name &lt;chr&gt; "Upper_Ross", "mid_ross", "LOWER ROSS", "ross_mouth "
+$ lat       &lt;dbl&gt; -19.31, -19.28, -19.26, -19.25
+$ lon       &lt;dbl&gt; 146.74, 146.78, 146.81, 146.83
+$ zone      &lt;chr&gt; "Upstream", "Middle", "Downstream", "Marine"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardizing site names</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>clean_metadata <span class="ot">&lt;-</span> metadata <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site_name =</span> <span class="fu">str_to_sentence</span>(site_name), </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">site_name =</span> <span class="fu">str_trim</span>(site_name), </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">site_name =</span> <span class="fu">str_replace_all</span>(site_name, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">site =</span> site_name)  <span class="co"># Rename to merge with catch data</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(clean_metadata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        site    lat    lon       zone
 1 Upper_ross -19.31 146.74   Upstream
@@ -198,23 +217,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 4 Ross_mouth -19.25 146.83     Marine</code></pre>
 </div>
 </div>
+</section>
+<section id="the-catch-data" class="level3">
+<h3 class="anchored" data-anchor-id="the-catch-data">The Catch Data</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cleancatch_data <span class="ot">&lt;-</span> catch_data <span class="sc">%&gt;%</span>  </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="fu">str_to_sentence</span>(site), <span class="co"># Standardizing site names</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">site =</span> <span class="fu">str_trim</span>(site), </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">site =</span> <span class="fu">str_replace_all</span>(site, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span>  </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">species =</span> <span class="fu">str_to_sentence</span>(species), <span class="co"># Standardizing species</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">species =</span> <span class="fu">str_trim</span>(species), </span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">species =</span> <span class="fu">str_replace_all</span>(species, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">common_name =</span> species) <span class="sc">%&gt;%</span> <span class="co">#to merge with species dictionary</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">ymd</span>(date)) <span class="sc">%&gt;%</span> <span class="co"># Standardizing dates</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">complete</span>(site, date, common_name, <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">count =</span> <span class="dv">0</span>)) <span class="co">#ensures that if no data was recorded, a 0 is in the place where the data should have been recorded</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(cleancatch_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using glimpse() we can see the inconsistencies in the species and that the </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(catch_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 427
+Columns: 4
+$ site    &lt;chr&gt; "Lower_ross", "Lower_ross", "Lower_ross", "Lower_ross", "Lower…
+$ date    &lt;dttm&gt; 2026-05-01, 2026-05-01, 2026-05-01, 2026-05-01, 2026-05-02, 2…
+$ species &lt;chr&gt; "barramundi", "MANGROVE JACK", "bream", "flathead", "barramund…
+$ count   &lt;dbl&gt; 6, 3, 4, 2, 1, 1, 3, 3, 2, 3, 1, 8, 4, 1, 1, 2, 1, 2, 4, 2, 2,…</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cleancatch_data <span class="ot">&lt;-</span> catch_data <span class="sc">%&gt;%</span>  </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="fu">str_to_sentence</span>(site), <span class="co"># Standardizing site names</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">site =</span> <span class="fu">str_trim</span>(site), </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">site =</span> <span class="fu">str_replace_all</span>(site, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span>  </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">species =</span> <span class="fu">str_to_sentence</span>(species), <span class="co"># Standardizing species</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">species =</span> <span class="fu">str_trim</span>(species), </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">species =</span> <span class="fu">str_replace_all</span>(species, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">common_name =</span> species) <span class="sc">%&gt;%</span> <span class="co">#to merge with species dictionary</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">ymd</span>(date)) <span class="sc">%&gt;%</span> <span class="co"># Standardizing dates</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">complete</span>(site, date, common_name, <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">count =</span> <span class="dv">0</span>)) <span class="co">#ensures that if no data was recorded, a 0 is in the place where the data should have been recorded</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(cleancatch_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 480 × 4
    site       date       common_name   count
@@ -232,23 +261,62 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 470 more rows</code></pre>
 </div>
 </div>
+</section>
+<section id="species-information" class="level3">
+<h3 class="anchored" data-anchor-id="species-information">Species Information</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sensor_data <span class="ot">&lt;-</span> raw_sonde_data <span class="sc">%&gt;%</span>  </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="fu">str_to_sentence</span>(site), <span class="co"># Standardizing site names</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">site =</span> <span class="fu">str_trim</span>(site), </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">site =</span> <span class="fu">str_replace_all</span>(site, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timestamp =</span> <span class="fu">dmy_hm</span>(timestamp)) <span class="sc">%&gt;%</span> <span class="co"># Standardizing dates</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">turbidity =</span> <span class="fu">na_if</span>(turbidity, <span class="sc">-</span><span class="dv">999</span>)) <span class="sc">%&gt;%</span> <span class="co"># Clearing out bad data</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">salinity =</span> <span class="fu">ifelse</span>(salinity <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="cn">NA</span>, salinity)) </span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>daily_sensordata <span class="ot">&lt;-</span> sensor_data <span class="sc">%&gt;%</span> </span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(site, <span class="at">date =</span> <span class="fu">as_date</span>(timestamp)) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">daymean_temp =</span> <span class="fu">mean</span>(temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">daymean_salinity =</span> <span class="fu">mean</span>(salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">daymean_turbidity =</span> <span class="fu">mean</span>(turbidity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(daily_sensordata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(species_dictionary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 4
+Columns: 2
+$ common_name     &lt;chr&gt; "barramundi", "mangrove_jack", "bream", "flathead"
+$ scientific_name &lt;chr&gt; "Lates calcarifer", "Lutjanus argentimaculatus", "Acan…</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardizing species</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>species_dictionary <span class="ot">&lt;-</span> species_dictionary <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">common_name =</span> <span class="fu">str_to_sentence</span>(common_name), </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">common_name =</span> <span class="fu">str_trim</span>(common_name), </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">common_name =</span> <span class="fu">str_replace_all</span>(common_name, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(species_dictionary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    common_name           scientific_name
+1    Barramundi          Lates calcarifer
+2 Mangrove_jack Lutjanus argentimaculatus
+3         Bream        Acanthopagrus spp.
+4      Flathead        Platycephalus spp.</code></pre>
+</div>
+</div>
+</section>
+<section id="the-environmental-data" class="level3">
+<h3 class="anchored" data-anchor-id="the-environmental-data">The Environmental Data</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(raw_sonde_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 11,520
+Columns: 5
+$ site        &lt;chr&gt; "upper_ross", "mid_ross", "lower_ross", "ross_mouth", "upp…
+$ timestamp   &lt;chr&gt; "01/05/2026 00:00", "01/05/2026 00:00", "01/05/2026 00:00"…
+$ temperature &lt;dbl&gt; 23.71379, 24.13302, 24.23558, 24.64147, 26.06955, 24.62576…
+$ salinity    &lt;dbl&gt; 4.054812, 15.742962, 28.934938, 33.891350, 3.962750, 12.05…
+$ turbidity   &lt;dbl&gt; 6.489046, 49.216967, 48.135752, 49.811493, 25.184739, 34.8…</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>sensor_data <span class="ot">&lt;-</span> raw_sonde_data <span class="sc">%&gt;%</span>  </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="fu">str_to_sentence</span>(site), <span class="co"># Standardizing site names</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">site =</span> <span class="fu">str_trim</span>(site), </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">site =</span> <span class="fu">str_replace_all</span>(site, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timestamp =</span> <span class="fu">dmy_hm</span>(timestamp)) <span class="sc">%&gt;%</span> <span class="co"># Standardizing dates</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">turbidity =</span> <span class="fu">na_if</span>(turbidity, <span class="sc">-</span><span class="dv">999</span>)) <span class="sc">%&gt;%</span> <span class="co"># Clearing out bad data</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">salinity =</span> <span class="fu">ifelse</span>(salinity <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="cn">NA</span>, salinity)) </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>daily_sensordata <span class="ot">&lt;-</span> sensor_data <span class="sc">%&gt;%</span> </span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(site, <span class="at">date =</span> <span class="fu">as_date</span>(timestamp)) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">daymean_temp =</span> <span class="fu">mean</span>(temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">daymean_salinity =</span> <span class="fu">mean</span>(salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">daymean_turbidity =</span> <span class="fu">mean</span>(turbidity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(daily_sensordata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
   site       date       daymean_temp daymean_salinity daymean_turbidity
@@ -261,27 +329,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 6 Lower_ross 2026-05-06         24.0             28.2              24.0</code></pre>
 </div>
 </div>
+</section>
+</section>
+<section id="joining-the-clean-datasets" class="level2">
+<h2 class="anchored" data-anchor-id="joining-the-clean-datasets">Joining the Clean Datasets</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardizing species</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>species_dictionary <span class="ot">&lt;-</span> species_dictionary <span class="sc">%&gt;%</span> </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">common_name =</span> <span class="fu">str_to_sentence</span>(common_name), </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">common_name =</span> <span class="fu">str_trim</span>(common_name), </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">common_name =</span> <span class="fu">str_replace_all</span>(common_name, <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>))</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(species_dictionary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>    common_name           scientific_name
-1    Barramundi          Lates calcarifer
-2 Mangrove_jack Lutjanus argentimaculatus
-3         Bream        Acanthopagrus spp.
-4      Flathead        Platycephalus spp.</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Joining the Fish data</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>merge_catchspecies <span class="ot">&lt;-</span> cleancatch_data <span class="sc">%&gt;%</span> </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(species_dictionary, <span class="at">by =</span> <span class="fu">join_by</span>(common_name))</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(merge_catchspecies)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Joining the Fish data</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>merge_catchspecies <span class="ot">&lt;-</span> cleancatch_data <span class="sc">%&gt;%</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(species_dictionary, <span class="at">by =</span> <span class="fu">join_by</span>(common_name))</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(merge_catchspecies)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 480 × 5
    site       date       common_name   count scientific_name          
@@ -298,11 +355,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 10 Lower_ross 2026-05-03 Bream             0 Acanthopagrus spp.       
 # ℹ 470 more rows</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Joining environmental data</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>merge_metasensor <span class="ot">&lt;-</span> daily_sensordata <span class="sc">%&gt;%</span> </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(clean_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(site))</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(merge_metasensor)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Joining environmental data</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>merge_metasensor <span class="ot">&lt;-</span> daily_sensordata <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(clean_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(site))</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(merge_metasensor)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 120 × 8
    site   date       daymean_temp daymean_salinity daymean_turbidity   lat   lon
@@ -320,26 +377,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 110 more rows
 # ℹ 1 more variable: zone &lt;chr&gt;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating one large dataset</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> merge_metasensor <span class="sc">%&gt;%</span> </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(merge_catchspecies, <span class="at">by =</span> <span class="fu">join_by</span>(date, site))</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(merged_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating one large dataset</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> merge_metasensor <span class="sc">%&gt;%</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(merge_catchspecies, <span class="at">by =</span> <span class="fu">join_by</span>(date, site))</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(merged_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<ol start="2" type="1">
-<li>A statistical summary table displaying the mean and standard deviation of fish counts and salinity for each species per zone.</li>
-</ol>
+</section>
+<section id="statistical-summary" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-summary">Statistical Summary</h2>
+<p>A statistical summary table displaying the mean and standard deviation of fish counts and salinity for each species per zone.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>summary_table <span class="ot">&lt;-</span> merged_data <span class="sc">%&gt;%</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(scientific_name, zone) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(),</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_count =</span> <span class="fu">mean</span>(count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_count =</span> <span class="fu">sd</span>(count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">se_count =</span> <span class="fu">sd</span>(count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>((n)),</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_salinity =</span> <span class="fu">mean</span>(daymean_salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_salinity =</span> <span class="fu">sd</span>(daymean_salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">se_salinity =</span> <span class="fu">sd</span>(daymean_salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)<span class="sc">/</span> <span class="fu">sqrt</span> ((n)),</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_table)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>summary_table <span class="ot">&lt;-</span> merged_data <span class="sc">%&gt;%</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(scientific_name, zone) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_count =</span> <span class="fu">mean</span>(count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_count =</span> <span class="fu">sd</span>(count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">se_count =</span> <span class="fu">sd</span>(count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>((n)),</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_salinity =</span> <span class="fu">mean</span>(daymean_salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_salinity =</span> <span class="fu">sd</span>(daymean_salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">se_salinity =</span> <span class="fu">sd</span>(daymean_salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)<span class="sc">/</span> <span class="fu">sqrt</span> ((n)),</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_table)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 16 × 9
    scientific_name        zone      n mean_count sd_count se_count mean_salinity
@@ -363,74 +421,56 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 2 more variables: sd_salinity &lt;dbl&gt;, se_salinity &lt;dbl&gt;</code></pre>
 </div>
 </div>
+</section>
+<section id="plotting-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="plotting-the-data">Plotting the Data</h2>
 <ol start="3" type="1">
 <li>A multi-panel plot (faceted by species) showing fish abundance along the salinity gradient, formatted to professional publication standards.</li>
 </ol>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>summary_table <span class="sc">%&gt;%</span> </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean_salinity, <span class="at">ymin =</span> mean_count <span class="sc">-</span> se_count, <span class="at">ymax =</span> mean_count <span class="sc">+</span> se_count),  <span class="at">fill =</span> <span class="st">"lightgrey"</span>) <span class="sc">+</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean_salinity, <span class="at">y =</span> mean_count)) <span class="sc">+</span> </span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>scientific_name, <span class="at">scales =</span> <span class="st">"fixed"</span>) <span class="sc">+</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"italic"</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">colour =</span> <span class="st">"grey20"</span>)) <span class="sc">+</span></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Daily Mean Abundance (+- SE)"</span>,</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Salinity Gradient"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>summary_table <span class="sc">%&gt;%</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean_salinity, <span class="at">ymin =</span> mean_count <span class="sc">-</span> se_count, <span class="at">ymax =</span> mean_count <span class="sc">+</span> se_count),  <span class="at">fill =</span> <span class="st">"lightgrey"</span>) <span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean_salinity, <span class="at">y =</span> mean_count)) <span class="sc">+</span> </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>scientific_name, <span class="at">scales =</span> <span class="st">"fixed"</span>) <span class="sc">+</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"italic"</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">colour =</span> <span class="st">"grey20"</span>)) <span class="sc">+</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Daily Mean Abundance (+- SE)"</span>,</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Salinity Gradient"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="Workshop2_keystoneEX_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Workshop2_keystoneEX_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Fish Abundance Along the Salinity Gradient</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>#because apparently i need to spatially organise the data</p>
+<p># because apparently i need to spatially organise the data</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>summary_table <span class="sc">%&gt;%</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> merged_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(zone, daymean_salinity), <span class="at">y =</span> count), <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="fl">0.15</span>), <span class="at">alpha=</span> <span class="fl">0.2</span>, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">x =</span> zone, <span class="at">ymin =</span> mean_count <span class="sc">-</span> se_count, <span class="at">ymax =</span> mean_count <span class="sc">+</span> se_count), <span class="at">width =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(zone, mean_salinity), <span class="at">y =</span> mean_count, <span class="at">colour =</span> zone), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>scientific_name, <span class="at">scales =</span> <span class="st">"fixed"</span>) <span class="sc">+</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"italic"</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">colour =</span> <span class="st">"grey20"</span>)) <span class="sc">+</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Fish Abundance"</span>,</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Spacial Salinity Gradient"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>summary_table <span class="sc">%&gt;%</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> merged_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(zone, daymean_salinity), <span class="at">y =</span> count), <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="fl">0.15</span>), <span class="at">alpha=</span> <span class="fl">0.2</span>, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">x =</span> zone, <span class="at">ymin =</span> mean_count <span class="sc">-</span> se_count, <span class="at">ymax =</span> mean_count <span class="sc">+</span> se_count), <span class="at">width =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(zone, mean_salinity), <span class="at">y =</span> mean_count, <span class="at">colour =</span> zone), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>scientific_name, <span class="at">scales =</span> <span class="st">"fixed"</span>) <span class="sc">+</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"italic"</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">colour =</span> <span class="st">"grey20"</span>)) <span class="sc">+</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Fish Abundance"</span>,</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Spacial Salinity Gradient"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="Workshop2_keystoneEX_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Workshop2_keystoneEX_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Fish abundance of four species along the spatial salinity gradient of an estuary</figcaption>
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#(data = merged_data, aes(x = reorder(zone, daymean_salinity), y = count), inherit.aes = FALSE) + </span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">#geom_boxplot(data = merged_data, aes(x = reorder(zone, daymean_salinity), y = count), inherit.aes = FALSE) </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#(data = merged_data, aes(x = reorder(zone, daymean_salinity), y = count), inherit.aes = FALSE) + </span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co">#geom_boxplot(data = merged_data, aes(x = reorder(zone, daymean_salinity), y = count), inherit.aes = FALSE) </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Rules of Engagement</strong> Because this is an open-ended task, there is no single “correct” way to approach this and structure your code. However, think about all the data-wrangling and visualization skills you have developed over recent weeks, and adhere to the following professional standards:</p>
-<p>Monitor your AI agents: You are encouraged to use AI to help you write code. However, for every major data wrangling step, make sure you understand what is going on and are not just running AI-written code blindly.</p>
-<p>Annotate your work: To help you with the above, make sure you include comments (#) explaining what the code is doing. If you used an AI prompt to generate a complex block of code, paste your prompt as a comment above it.</p>
-<p>Utilise the tidyverse: There are many ways of wrangling data, but here we are looking for you to use your growing skills in dplyr, tidyr, stringr, and lubridate functions linked by the pipe (|&gt; or %&gt;%).</p>
-<p>Reproducible workflow: Make sure you stay on top of your PC → Git → GitHub lifecycle, by utilising: save, commit, pull, push</p>
-<p><strong>Mission Objectives</strong> <em>Phase 1:</em> Ingestion and Decontamination Load the four datasets. Before you attempt to join them, think about how you will need to wrangle and clean them individually:</p>
-<p>Excel Tab Iteration: The catch log is split across multiple tabs (one for each site). You will need to figure out how to read all tabs and bind them together into a single data frame.</p>
-<p>String Standardisation: The site and species names in the catch log are a mess (e.g., “MANGROVE JACK” vs “mangrove_jack”). Standardise all site and species columns to lowercase with underscores so they can securely match your dictionary and metadata tables later.</p>
-<p>Temporal Parsing: The dates in the sonde dataset are messy character strings. Parse them into formal Date-Time objects.</p>
-<p>Hardware Errors: The turbidity sensor occasionally failed and logged a value of -999.0. Identify these and convert them to true NA values before they ruin your averages.</p>
-<p><em>Phase 2:</em> The Relational Architecture Bring the data together into a cohesive format:</p>
-<p>Summarise the water sensor data: The sensor data is logged every 15 minutes, but your catch data is daily. Create a daily summary table that calculates the mean temperature and salinity for each site on each day. (Hint: look at the floor_date() function to group by day).</p>
-<p>Taxonomic Translation: Scientific journals will not accept “bream” or “flathead”. Use a mutating join to merge your species_dictionary into your catch data, replacing the common names with accurate scientific taxonomy.</p>
-<p>The Grand Join: Merge your translated catch data, your spatial metadata, and your daily water quality summaries into a single master data frame.</p>
-<p><em>Phase 3:</em> The Zero-Catch Framework The former student only recorded a row when they actually caught a fish:</p>
-<p>Use tidyr::complete() to build a zero-data framework. Ensure that every species is represented at every site, on every sampling day.</p>
-<p>Replace the resulting NA values in the catch column with 0 using coalesce().</p>
-<p><em>Phase 5:</em> Visual Communication Prove that your data rescue was successful. Construct a multi-panel plot using ggplot2 and facet_wrap().</p>
-<p>The Goal: Visualise how the abundance of different species changes along the salinity gradient.</p>
-<p>The Requirement: The plot should have professional axis labels, a clean theme (e.g., theme_minimal()), be ordered spatially (e.g.&nbsp;from upstream to downstream), and the facet labels (the scientific names) should really be italicised!</p>
-</section>
 </section>
 
 </main>
