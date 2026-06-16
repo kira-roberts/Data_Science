@@ -68,7 +68,7 @@ head(raw_sonde_data)
 Looking at the data, we can see several inconsistencies in the naming of variables and organisation of dates/times, looking deeper shows that there is also issues with the data itself where entries are missing or contain legacy errors. These need to be adjusted to ensure the datasets can be joined and accurately displayed.
 
 ### Metadata
-
+This metadata file primarily gives us information on the sites. It  shows the specific longitude and latitude of each site, as well as gives it a zone based on where the site lies in the estuary (downstream, marine, etc.). The site names are used across the other datasets and need to be standardized across them all. 
 ```{r cleanmeta}
 # Using glimpse() we can see the inconsistencies in site_name
 glimpse(metadata) 
@@ -83,7 +83,7 @@ print(clean_metadata)
 ```
 
 ### The Catch Data
-
+This is our primary data set, it shows the frequency of the fish caught, as well as when and where they were caught. To be able to compare the data with the other data sets we need to ensure consisitancy. 
 ```{r cleancatch}
 # Using glimpse() we can see the inconsistencies in the species names and that the date is recognized as a date-time object. 
 glimpse(catch_data)
@@ -107,7 +107,7 @@ print(cleancatch_data)
 ```
 
 ### Species Information
-
+Our catch data only used the common name to identify the species, however, in scientific publications we need to use the proper scientific nomenclature. This species dictionary allows us to link the common names with the scientific names, but we need to make sure the common names are standardized to what is in the catch data to link them
 ```{r cleandictionary}
 glimpse(species_dictionary)
 
@@ -121,7 +121,7 @@ print(species_dictionary)
 ```
 
 ### The Environmental Data
-
+The raw_sonde_data is the environmental data collected from the sonde sensor. Like most raw datasets it needs to be cleaned up to ensure usability and some columns need to formatted correctly for the data they contain. As the data will need to be combined with all the other data sets we also need to ensure it is standardized. 
 ```{r cleansonde}
 # Using glimpse() we can see that the timestamp is listed as a character (<chr>) rather than a datetime object (<dttm>) and unique() shows that while the site data is more consistent than previously it still needs to be standardized
 glimpse(raw_sonde_data)
@@ -173,8 +173,7 @@ view(merged_data)
 ```
 
 ## Statistical Summary
-
-A statistical summary table displaying the mean and standard deviation of fish counts and salinity for each species per zone.
+To easily display the patterns in the data that we see, a summary table is recommended. The following code produces one that show the mean, standard deviation  and standard error of the fish counts and salinity for each species per zone. Salinity was chosen as the primary environmental variant as the turbidity was highly variable across all variants (time, site) and temperature was more closely related to the time of day than the site. 
 
 ```{r summary}
 summary_table <- merged_data %>% 
