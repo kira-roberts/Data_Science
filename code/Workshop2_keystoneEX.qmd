@@ -191,22 +191,8 @@ print(summary_table)
 ```
 
 ## Plotting the Data
+Now that we have the data sorted out, the final step is to produce a multi-panel plot (faceted by species) showing fish abundance along the salinity gradient, formatted to professional publication standards. This figure shows not only the statistical summaries but it also shows the individual points 
 
-3.  A multi-panel plot (faceted by species) showing fish abundance along the salinity gradient, formatted to professional publication standards.
-
-```{r, fig.cap="Fish Abundance Along the Salinity Gradient", include=FALSE}
-summary_table %>% 
-  ggplot() +
-  geom_ribbon(aes(x = mean_salinity, ymin = mean_count - se_count, ymax = mean_count + se_count),  fill = "lightgrey") +
-  geom_line(aes(x = mean_salinity, y = mean_count)) + 
-  facet_wrap(~scientific_name, scales = "fixed") +
-  theme_bw() + 
-  theme(strip.text = element_text(face = "italic", size = 10, colour = "grey20")) +
-  labs(y = "Daily Mean Abundance (+- SE)",
-        x = "Salinity Gradient")
-```
-
-spatially organised
 ```{r, fig.cap="Fish abundance of four species along the spatial salinity gradient of an estuary"}
 summary_table %>% 
   ggplot() +
@@ -220,3 +206,16 @@ summary_table %>%
   labs(y = "Fish Abundance",
         x = "Spacial Salinity Gradient")
 ```
+
+```{r, fig.cap="Fish Abundance Along the Salinity Gradient", include=FALSE}
+summary_table %>% 
+  ggplot() +
+  geom_ribbon(aes(x = mean_salinity, ymin = mean_count - se_count, ymax = mean_count + se_count),  fill = "lightgrey") +
+  geom_line(aes(x = mean_salinity, y = mean_count)) + 
+  facet_wrap(~scientific_name, scales = "fixed") +
+  theme_bw() + 
+  theme(strip.text = element_text(face = "italic", size = 10, colour = "grey20")) +
+  labs(y = "Daily Mean Abundance (+- SE)",
+        x = "Salinity Gradient")
+```
+
