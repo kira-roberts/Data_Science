@@ -1,6 +1,6 @@
 ---
 title: "R for Marine Science Workshop 1"
-author: "Your name here"
+author: "Kira Roberts"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
  html_document:
