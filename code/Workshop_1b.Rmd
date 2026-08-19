@@ -24,7 +24,7 @@ objects()
 ```
 
 ### Load packages
-```{r packages, message=FALSE, warning=FALSE,}
+```{r packages, message=FALSE, warning=FALSE}
 library(tidyverse)
 ```
 
@@ -35,7 +35,7 @@ The following was used to call up the code found in the script "Workshop1.R".
 source("Workshop1.R") 
 ```
 For the sake of this portfolio, I have copied the code into this markdown chunk. 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Load the primary data science framework and Excel import library
 library(tidyverse)
 library(readxl)
@@ -185,7 +185,11 @@ print(biological_signal) #the species will have a group that gives an NA for sex
 #----------------------------------------------------------------
 ```
 
-Visualizing Body Size and Shape 
+## Challenge: Visualizing Body Size and Shape 
+*Using your loaded data, create a code chunk in your .qmd that performs the following two tasks side-by-side:*
+*1. Summary Table: Pipe your data to group_by() and summarise() to calculate the mean body mass for each species and island.*
+*Visualisation: Pipe the same dataset into ggplot() to create a boxplot of body_mass_g by species, with the island variable mapped to fill or facet_wrap().*
+
 ```{r, message=FALSE, warning=FALSE}
 # Summary 
 penguins %>% 
@@ -201,8 +205,9 @@ penguins %>%
   
 ```
 
-Piping Directly to Visualization
 
+## Challenge: Piping Directly to Visualization
+*In your .qmd template, try creating a new plot. Experiment with swapping sd_mass (standard deviation) for standard error—you will need to divide your sd by the square root of n (sd / sqrt(n)). See how that changes your visual interpretation of the data uncertainty. Present the summary table alongside the associated figure and write down your thoughts on the underlying ecological story that the data are telling.* 
 ```{r allpipe, message=FALSE, warning=FALSE}
 # Pipe directly from aggregation to plotting with error bars
 mass_compare_plot <- penguins %>% 
@@ -227,13 +232,13 @@ mass_compare_plot <- penguins %>%
 mass_compare_plot
 
 ```
-Pause for thought: Think about what this figure is telling you about the biology of these species of penguins on these different islands. What do you think a statistical test would tell you here?
+Even knowing nothing about the biology of these penguin, it is hard to argue that the vast difference in masses between Gentoo penguins and Adelie and Chinstrap penguins, is likely a result of growth difference. Assuming penguins grow to a maximum size and then stop, and their mass is directly associated with this size, it is clear that the Gentoo penguins must grow to a larger maximum size than the other two species. 
 
 
-## Challange
+
 ```{r, message=FALSE, warning=FALSE}
 SEmass_compare_plot <- penguins %>% 
-  group_by(species, island) %>% 
+  group_by(species, island) %>%  
   summarise(
     n = n(),
     mean_mass = mean(body_mass_g, na.rm = TRUE),
